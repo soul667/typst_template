@@ -1,6 +1,7 @@
 #let 字体 = (
   仿宋: ("Times New Roman", "FangSong"),
-  宋体: ("Times New Roman", "Source Han Serif"),
+  宋体: ("Times New Roman", "SimSun"),
+  思源宋体: ("Times New Roman", "Source Han Serif"),
   黑体: ("Times New Roman", "SimHei"),
   楷体: ("Times New Roman", "KaiTi"),
   代码: ("New Computer Modern Mono", "Times New Roman", "SimSun"),
@@ -74,10 +75,10 @@
   }
 }
 
-#let chinesenumbering(..nums, location: none, brackets: false) = locate(loc => {
+#let chinesenumbering(..nums, location: none, brackets: false,chinese:true) = locate(loc => {
   let actual_loc = if location == none { loc } else { location }
   if appendixcounter.at(actual_loc).first() < 10 {
-    if nums.pos().len() == 1 {
+    if nums.pos().len() == 1 and chinese {
       "第" + chinesenumber(nums.pos().first(), standalone: true) + "章"
     } else {
       numbering(if brackets { "(1.1)" } else { "1.1" }, ..nums)
@@ -385,7 +386,9 @@
       pagebreak(weak: true)
     // }
   }}
-
+  import "@preview/cuti:0.2.1": show-cn-fakebold
+  show: show-cn-fakebold
+  // set text(font: ("Times New Roman", "SimSun"))
   set page("a4",
       margin: (
         top:setting.边距.上*1mm,
@@ -466,6 +469,7 @@
       #set text(size:size,fill:rgb(setting.主题色.R,setting.主题色.G,setting.主题色.B))
       #if it.numbering != none {
         strong(counter(heading).display())
+        // [uu]
         h(0.5em)
       }
       #strong(it.body)
@@ -473,8 +477,8 @@
 
       // #v(-2em)
     ]
-
-    #if it.level == 1 {
+    #if(setting.模板选择=="基本"){
+    if it.level == 1 {
       if not it.body.text in ("Abstract", "学位论文使用授权说明", "前言")  {
         // pagebreak()
         smartpagebreak()
@@ -496,14 +500,8 @@
       tablecounter.update(())
       rawcounter.update(())
       equationcounter.update(())
-      if(setting.模板选择=="论文"){
       set align(center)
-      sizedheading(it, 0pt,setting.标题.下面间距.大标题*1em)
-      }
-      else{
-         set align(center)
       sizedheading(it, 字号.三号,setting.标题.下面间距.大标题*1em)
-      }
       
     } else {
       if it.level == 2 {
@@ -514,6 +512,42 @@
         sizedheading(it, 字号.小四,setting.标题.下面间距.三级标题*1em)
       }
     }
+    }
+    #if(setting.模板选择=="论文"){
+    
+      locate(loc => {
+        if it.body.text == "摘要" {
+          partcounter.update(10)
+          counter(page).update(1)
+        } else if it.numbering != none and partcounter.at(loc).first() < 20 {
+          partcounter.update(20)
+          counter(page).update(1)
+        }
+      })
+      if it.numbering != none {
+        chaptercounter.step()
+      }
+      footnotecounter.update(())
+      imagecounter.update(())
+      tablecounter.update(())
+      rawcounter.update(())
+      equationcounter.update(())
+      
+        //  set align(center)
+      sizedheading(it, 字号.三号,setting.标题.下面间距.大标题*1em)
+
+      
+    } else {
+      if it.level == 2 {
+        sizedheading(it, 字号.四号,setting.标题.下面间距.一级标题*1em)
+      } else if it.level == 3 {
+        sizedheading(it, 字号.中四,setting.标题.下面间距.二级标题 *1em)
+      } else {
+        sizedheading(it, 字号.小四,setting.标题.下面间距.三级标题*1em)
+      }
+    }
+    
+    
   ]
 
   show figure.where(kind:image): set figure(supplement: [图])

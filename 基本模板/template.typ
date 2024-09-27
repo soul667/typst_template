@@ -378,13 +378,13 @@
 ) = {
   let smartpagebreak = () => {
     if alwaysstartodd {
-      skippedstate.update(true)
-      pagebreak(to: "odd", weak: true)
-      skippedstate.update(false)
-    } else {
+      // skippedstate.update(true)
+      // pagebreak(to: "odd", weak: true)
+      // skippedstate.update(false)
+    // } else {
       pagebreak(weak: true)
-    }
-  }
+    // }
+  }}
 
   set page("a4",
       margin: (
@@ -410,7 +410,7 @@
       [
         #set text(字号.五号)
         #set align(center)
-        页#str(counter(page).at(loc).first())
+        // 页#str(counter(page).at(loc).first())
         
         #if query(selector(heading).before(loc), loc).len() < 2 or query(selector(heading).after(loc), loc).len() == 0 {
           // Skip cover, copyright and origin pages

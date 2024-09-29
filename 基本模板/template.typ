@@ -25,7 +25,9 @@
   七号: 5.5pt,
   小七: 5pt,
 )
-
+#let heiti(text_)={
+  text(font: "SimHei")[#text_]
+}
 #let lengthceil(len, unit: 字号.小四) = calc.ceil(len / unit) * unit
 #let partcounter = counter("part")
 #let chaptercounter = counter("chapter")
@@ -353,8 +355,8 @@
   )
 }
 
-
-
+#let 行间距转换(正文字体,行间距) = ((行间距)/(正文字体)-0.75)*1em
+// ((setting.行间距)/(setting.字体.正文字号)-0.75)*1em
 // 基本设置
 #let data=yaml("./data.yml");
 #let setting=data.模板设置;
@@ -368,7 +370,7 @@
   eabstract: [],
   ekeywords: (),
   acknowledgements: [],
-  linespacing: 1em,
+  linespacing: 行间距转换(setting.字体.正文字号,setting.行间距),
   outlinedepth: 3,
   blind: false,
   listofimage: true,
@@ -401,12 +403,7 @@
         v(-0.8em)
         line(length:100%,stroke:1pt)
         }
-        
         #set text(10pt)
-    
-        // 11111111111
-        // #image("./robomaster.png",width:100pt)
-        
     ],
     footer: locate(loc => {
       if skippedstate.at(loc) and calc.even(loc.page()) { return }
@@ -437,7 +434,10 @@
 
   set text(font:字体.宋体,size: setting.字体.正文字号*1pt)
   // set align(center + horizon)
-  set heading(numbering: chinesenumbering)
+  if(setting.模板选择=="基本"){
+  set heading(numbering: chinesenumbering)}
+  if(setting.模板选择=="论文"){
+  set heading(numbering: chinesenumbering)}
   set figure(
     numbering: (..nums) => locate(loc => {
       if appendixcounter.at(loc).first() < 10 {
@@ -455,35 +455,42 @@
   )
   set list(indent: 2em)
   set enum(indent: 2em)
-
-
   show par: set block(spacing: linespacing)
   show raw: set text(font: 字体.代码)
-
+  // 标题设置 
   show heading: it => [
     // Cancel indentation for headings
     #set par(first-line-indent: 0em)
-// rgb("#333399")
-    #let sizedheading(it, size,w) = [
+    // font 0 宋体 1 黑体
+    #let sizedheading(it, size,w,font_:1) = [
       #v(w)
       #set text(size:size,fill:rgb(setting.主题色.R,setting.主题色.G,setting.主题色.B))
+      //  #if 1==1 {
+      #if font_==1{
+      set text(font: 字体.黑体)
+      }
+      //  }
+      // #if(it.level < 4){
+      //   set text(font: 字体.黑体)
+      // }
+      // #else{
+        // #if it.level ==1 {
+        // set text(size:size,fill:rgb(setting.主题色.R,setting.主题色.G,setting.主题色.B),font: 字体.黑体)
+        // }
+      // }
       #if it.numbering != none {
         strong(counter(heading).display())
-        // [uu]
         h(0.5em)
       }
-      #strong(it.body)
+      #strong(it.body+str(it.level))
       #v(w)
-
-      // #v(-2em)
     ]
-    #if(setting.模板选择=="基本"){
-    if it.level == 1 {
-      if not it.body.text in ("Abstract", "学位论文使用授权说明", "前言")  {
-        // pagebreak()
+    #if setting.模板选择=="基本"{
+      if it.level == 1{
+        if not it.body.text in ("Abstract", "学位论文使用授权说明", "前言")  {
         smartpagebreak()
       }
-      locate(loc => {
+        locate(loc => {
         if it.body.text == "摘要" {
           partcounter.update(10)
           counter(page).update(1)
@@ -502,50 +509,91 @@
       equationcounter.update(())
       set align(center)
       sizedheading(it, 字号.三号,setting.标题.下面间距.大标题*1em)
-      
-    } else {
-      if it.level == 2 {
+
+      }else{
+        if it.level == 2 {
         sizedheading(it, 字号.四号,setting.标题.下面间距.一级标题*1em)
       } else if it.level == 3 {
         sizedheading(it, 字号.中四,setting.标题.下面间距.二级标题 *1em)
       } else {
         sizedheading(it, 字号.小四,setting.标题.下面间距.三级标题*1em)
       }
-    }
-    }
-    #if(setting.模板选择=="论文"){
-    
-      locate(loc => {
-        if it.body.text == "摘要" {
-          partcounter.update(10)
-          counter(page).update(1)
-        } else if it.numbering != none and partcounter.at(loc).first() < 20 {
-          partcounter.update(20)
-          counter(page).update(1)
-        }
-      })
-      if it.numbering != none {
-        chaptercounter.step()
       }
-      footnotecounter.update(())
-      imagecounter.update(())
-      tablecounter.update(())
-      rawcounter.update(())
-      equationcounter.update(())
+    }else{
+      if setting.模板选择=="论文"{
+        if it.level == 2 {
+        sizedheading(it, 字号.四号,setting.标题.下面间距.一级标题*1em)
+      } else if it.level == 3 {
+        sizedheading(it, 字号.中四,setting.标题.下面间距.二级标题 *1em)
+      } else {
+        sizedheading(it, 字号.小四,setting.标题.下面间距.三级标题*1em)
+      }
+      }else{
+        
+      }
+    }
+// 
+    // }
+    // #if(setting.模板选择=="基本"){
+    // if it.level == 1 {
+    //   if not it.body.text in ("Abstract", "学位论文使用授权说明", "前言")  {
+    //     smartpagebreak()
+    //   }
+    //   locate(loc => {
+    //     if it.body.text == "摘要" {
+    //       partcounter.update(10)
+    //       counter(page).update(1)
+    //     } else if it.numbering != none and partcounter.at(loc).first() < 20 {
+    //       partcounter.update(20)
+    //       counter(page).update(1)
+    //     }
+    //   })
+    //   if it.numbering != none {
+    //     chaptercounter.step()
+    //   }
+    //   footnotecounter.update(())
+    //   imagecounter.update(())
+    //   tablecounter.update(())
+    //   rawcounter.update(())
+    //   equationcounter.update(())
+    //   set align(center)
+    //   sizedheading(it, 字号.三号,setting.标题.下面间距.大标题*1em)
       
-        //  set align(center)
-      sizedheading(it, 字号.三号,setting.标题.下面间距.大标题*1em)
+    // } else {
+    //   if it.level == 2 {
+    //     sizedheading(it, 字号.四号,setting.标题.下面间距.一级标题*1em)
+    //   } else if it.level == 3 {
+    //     sizedheading(it, 字号.中四,setting.标题.下面间距.二级标题 *1em)
+    //   } else {
+    //     sizedheading(it, 字号.小四,setting.标题.下面间距.三级标题*1em)
+    //   }
+    // }
+    // }
+    // #if(setting.模板选择=="论文"){
+      
+    //   locate(loc => {
+    //     if it.body.text == "摘要" {
+    //       partcounter.update(10)
+    //       counter(page).update(1)
+    //     } else if it.numbering != none and partcounter.at(loc).first() < 20 {
+    //       partcounter.update(20)
+    //       counter(page).update(1)
+    //     }
+    //   })
+    //   if it.numbering != none {
+    //     chaptercounter.step()
+    //   }
+    //   footnotecounter.update(())
+    //   imagecounter.update(())
+    //   tablecounter.update(())
+    //   rawcounter.update(())
+    //   equationcounter.update(())
+      
+    //     //  set align(center)
+    //   sizedheading(it, 字号.三号,setting.标题.下面间距.大标题*1em)
 
       
-    } else {
-      if it.level == 2 {
-        sizedheading(it, 字号.四号,setting.标题.下面间距.一级标题*1em)
-      } else if it.level == 3 {
-        sizedheading(it, 字号.中四,setting.标题.下面间距.二级标题 *1em)
-      } else {
-        sizedheading(it, 字号.小四,setting.标题.下面间距.三级标题*1em)
-      }
-    }
+    // } 
     
     
   ]

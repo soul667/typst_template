@@ -5,3 +5,7 @@
 
 ## 论文模板
 > 论文模板部分参照北京大学学位论文模板
+## 其他
+```shell
+typst init @preview/knowledge-key
+```

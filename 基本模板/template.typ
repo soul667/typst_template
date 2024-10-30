@@ -462,28 +462,14 @@
     // Cancel indentation for headings
     #set par(first-line-indent: 0em)
     // font 0 宋体 1 黑体
-    #let sizedheading(it, size,w,font_:1) = [
-      #v(w)
+    #let sizedheading(it, size,w,font_:true) = [
+      
       #set text(size:size,fill:rgb(setting.主题色.R,setting.主题色.G,setting.主题色.B))
-      //  #if 1==1 {
-      #if font_==1{
-      set text(font: 字体.黑体)
-      }
-      //  }
-      // #if(it.level < 4){
-      //   set text(font: 字体.黑体)
-      // }
-      // #else{
-        // #if it.level ==1 {
-        // set text(size:size,fill:rgb(setting.主题色.R,setting.主题色.G,setting.主题色.B),font: 字体.黑体)
-        // }
-      // }
       #if it.numbering != none {
         strong(counter(heading).display())
         h(0.5em)
       }
-      #strong(it.body+str(it.level))
-      #v(w)
+      #strong(it.body+counter(heading).display())
     ]
     #if setting.模板选择=="基本"{
       if it.level == 1{
@@ -521,10 +507,25 @@
       }
     }else{
       if setting.模板选择=="论文"{
-        if it.level == 2 {
+        if it.level == 1{
+          // 段前空 24 磅，段后空 6 磅
+        set text(font: 字体.黑体)
+        v(24pt)
         sizedheading(it, 字号.四号,setting.标题.下面间距.一级标题*1em)
+        v(6pt)
+        }
+        else if it.level == 2 {
+        set text(font: 字体.黑体)
+        
+        v(12pt)
+        sizedheading(it, 13pt,setting.标题.下面间距.一级标题*1em)
+        v(6pt)
+      
       } else if it.level == 3 {
+        v(12pt)
         sizedheading(it, 字号.中四,setting.标题.下面间距.二级标题 *1em)
+        v(6pt)
+      
       } else {
         sizedheading(it, 字号.小四,setting.标题.下面间距.三级标题*1em)
       }

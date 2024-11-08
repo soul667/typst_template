@@ -1,5 +1,24 @@
 #import "@preview/rubber-article:0.1.0": *
 #import "@preview/mitex:0.2.4": *
+#import "@preview/cmarker:0.1.1"
+// #import "@preview/quick-maths:0.1.0": shorthands
+
+// 设置公式标号 
+#import "@preview/i-figured:0.2.4"
+#show math.equation: i-figured.show-equation.with(only-labeled: true)
+// 设置代码块
+#import "@preview/codly:1.0.0": *
+#codly(
+   languages: (
+   python: (
+    name: "Python",
+    // icon: [#tabler-icon("brand-github-filled")]
+   )
+   )
+)
+#import "@preview/showybox:2.0.3": showybox
+
+#show: codly-init.with()
 
 #show: article.with()
 
@@ -26,6 +45,8 @@
       #v(-1em)
       ]
       }
+       
+
        
 // #set par(justify: true,first-line-indent: 2em)
 // #show: show-cn-fakebold
@@ -179,3 +200,15 @@ UE中，创建新的项目，安装两个插件Datasmith Import 和 Datasmith CA
 = 模块制作
 #h(1em)
 == 流水灯模块
+
+= 关键点检测模型
+#v(1em)
+== COCO关键点股价定义
+= UE UI 菜单
+
+= 渲染目标
+
+$ i(y)=("FanCenter"_y"-Center"_y,"FanCenter"_x"-Center"_x) $
+$ i(x)=plus.minus(i(x)_y,-i(x)_x)=(i(x)_y,-i(x)_x) $
+
+所有的点从$(i(x),i(y))$变换而来。

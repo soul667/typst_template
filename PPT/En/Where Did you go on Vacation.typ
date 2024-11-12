@@ -157,84 +157,41 @@
 
 
 
-= 过去式
+== 过去式
 
 
  1. *decide* （决定）
    - *过去式*: decided
    - *现在进行时*: deciding
-   - *讲解*: 
-     - *decided* 表示过去做出决定的动作，已经完成。
-       - 例句: "She decided to move to a new city last year."
-     - *deciding* 表示正在做决定的动作，动作在进行中。
-       - 例句: "He is deciding which university to attend."
 
  2. *try* （尝试）
    - *过去式*: tried
    - *现在进行时*: trying
-   - *讲解*:
-     - *tried* 表示过去尝试过的动作，已经完成。
-       - 例句: "She tried a new recipe yesterday."
-     - *trying* 表示正在尝试的动作，动作在进行中。
-       - 例句: "He is trying to learn a new language."
 
  3. *feel* （感觉）
    - *过去式*: felt
    - *现在进行时*: feeling
-   - *讲解*:
-     - *felt* 表示过去的感觉，动作已经完成。
-       - 例句: "I felt tired after the long journey."
-     - *feeling* 表示正在感受某种情绪，动作在进行中。
-       - 例句: "She is feeling happy about her promotion."
 
  4. *wait* （等待）
    - *过去式*: waited
    - *现在进行时*: waiting
-   - *讲解*:
-     - *waited* 表示过去已经等待的动作。
-       - 例句: "They waited for the bus in the rain."
-     - *waiting* 表示当前正在等待的动作。
-       - 例句: "We are waiting for the meeting to start."
 
  5. *catch* （抓住）
    - *过去式*: caught
    - *现在进行时*: catching
-   - *讲解*:
-     - *caught* 表示过去已经抓住或捕获的动作。
-       - 例句: "He caught the ball during the game."
-     - *catching* 表示当前正在抓住或捕获的动作。
-       - 例句: "She is catching up with her homework."
 
  6. *dislike* （不喜欢）
    - *过去式*: disliked
    - *现在进行时*: disliking
-   - *讲解*:
-     - *disliked* 表示过去不喜欢某事物，动作已经完成。
-       - 例句: "I disliked the movie because it was too scary."
-     - *disliking* 表示当前不喜欢某事物，动作在进行中。
-       - 例句: "She is disliking her new job because it’s too stressful."
 
  7. *seem* （似乎）
    - *过去式*: seemed
    - *现在进行时*: seeming
-   - *讲解*:
-     - *seemed* 表示过去看起来或表现出某种样子的状态。
-       - 例句: "He seemed nervous during the interview."
-     - *seeming* 表示当前看起来的状态或表现，通常在现在进行时中少见，但可以用于描述持续的外在表现。
-       - 例句: "It is seeming more likely that they will win the match."
 
  8. *decide*（决定）
    - *过去式*: decided
    - *现在进行时*: deciding
-   - *讲解*：
-     - *decided*：表示过去已经完成的决定。
-       - 例句: "He decided to move to another city."
-     - *deciding*：表示正在考虑或做决定的动作。
-       - 例句: "I am deciding whether to take a vacation."
 
- 总结
-- *过去式*：表示已经完成的动作或状态，通常用于过去的时间。
-- *现在进行时*：表示正在进行的动作，通常带有一种未完成的感觉，用于描述当前或持续的行为。
 
 = 2
 // 以下是图片中 *Unit 2* 的单词列表：
@@ -281,17 +238,21 @@
 1. housework - n. 家务劳动；家务事
    - 例句: She does all the housework in her family.
    - 常见用法: do housework (做家务)
-   - 易错点: 不要和housework误拼为house works
+   - 易错点: 
+      - homework是“家庭作业”
+
 
 2. hardly - adv. 几乎不；几乎没有
    - 例句: I can hardly hear you.
    - 常见用法: hardly ever (几乎不)
+      - 例句: She hardly ever goes to the gym.
    - 易错点: hard和hardly的区别，hard是努力地或艰难地
 
 3. hard - adj. adv. 努力地；艰难地
    - 例句: She works hard to pass the exam.
    - 常见用法: work hard (努力工作)
    - 易错点: hard和hardly的区别，不要混淆意思
+   - 一句话辨析hard和hardly 
 
 4. ever - adv. 在任何时候；曾经
    - 例句: Have you ever been to Paris?

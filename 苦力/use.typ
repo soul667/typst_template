@@ -37,7 +37,7 @@
 #let theorem = thmbox("定理", "定理", stroke: rgb("#ada693a1") + 1pt,breakable: true) //定理环境
 #let example = thmbox("例", "例", stroke:(paint: blue, thickness: 0.5pt, dash: "dashed") ,breakable: true) //定理环境
 
-#let definition = thmbox("定理", "定理", inset: (x: 0.5em, top: -0.25em,bottom:-0.25em),stroke: rgb("#ada693a1") + 0pt,breakable: false) // 定义环境
+#let definition = thmbox("定义", "定义", inset: (x: 0.5em, top: -0.25em,bottom:-0.25em),stroke: rgb("#ada693a1") + 0pt,breakable: false) // 定义环境
 #let proof = thmproof("证", "证",breakable: true) //证明环境
 // ----------------------------
 
@@ -301,7 +301,8 @@ $ P=mat(alpha_1,alpha_2,beta_1) $
 ]
 
 == 矩阵分解
-=== 矩阵的三角分解
+=== 常见
+==== 矩阵的三角分解
 设$A in F_{n,n}$
 1. $L,U in F_{n,n}$分别为下三角和上三角矩阵，$A=L U$称作$L U$分解
 2. $L,V in F_{n,n}$分别为对角元素为1的下三角和上三角矩阵，$D$是对角矩阵，称作$L D V$分解
@@ -322,7 +323,30 @@ $ mark(H,tag:#<hang>)[P|E]=[H P|P] quad mat(P;"--";E)L=mat(P L;"--";mark(L,tag:#
   行的秩表示为行向量张成向量空间的维度，列的秩表示为行向量张成向量空间的维度。
   #proof()[根据高斯变换，得到行的秩等于主元个数等于列空间维度。]
 ]
+#theorem[
 任意不为零的矩阵$A_{m,n}$都有满秩分解 $ A_{m,n}=B_{m,r}C_{r,n} $
+求解方法①$  B'mat(A,"|",E)=>mat(mark(C',tag:#<hjt>),"|",B')=> A= mat(B_{m,r},0_{m,n-r}) mat(C_{r,n};0_{n-r,n}) =B_{m,r}C_{r,n} #annot(<hjt>)[行阶梯型]$
+
+② 先化为Hermite 标准形$H$(带主元行阶梯型),找到A中主元列取出构成$B=(alpha_1,alpha_2,...,alpha_n)$,$H$中非零行构成$C$
+]
+==== 可对角化矩阵的谱分解
+$ A=P^(-1)diag(mark(lambda_1" ,..., "lambda_1,tag:#<lam1>),lambda_2,...,mark(lambda_n,tag:#<lam2>)) P #annot(<lam1>)[$r_1$个]  #annot(<lam2>)[$r_n$个] $
+其中$lambda_i$表述矩阵的特征值，$r_i$表示特征值的重数。
+=== Schur分解与正规矩阵
+#definition([*实对称矩阵和Hermit矩阵*])[
+  $ "（实对称阵）" A^T=A $
+  $ "（Hermit矩阵）" A^H=mark((macron(A))^T,tag:#<macrom>)=A  #annot(<macrom>)[复共轭转置] $
+
+]
+在欧式空间中，一个实对称矩阵$A$一定正交相似于一个对角阵。
+$ A=C^T diag(lambda_1,...,lambda_n) C=C^(-1) diag(lambda_1,...,lambda_n) C $
+在酉空间,一个 Herm ite 矩阵 A (A H =A )一定可酉相似于对角形:即存在酉矩阵 U 。
+$ A=U^H diag(lambda_1,...,lambda_n) U $
+#definition([*UR分解*])[
+  对于一个可逆矩阵$C$,存在
+]
+=== 矩阵的奇异值分解
+矩阵的奇异值分解是在线性动态系统的辨识,最佳逼近问题,实验数据处理,数字 图像存储中应用广泛的一种分解。
 
 == 矩阵的广义逆
 == 矩阵分析

@@ -16,6 +16,7 @@
 // #import "@preview/cuti:0.2.1": show-cn-fakebold  // 中文伪粗体 像我们使用的Source Han Serif SC是粗体字体不用开启
 // #show: show-cn-fakebold
 #import "@preview/dashy-todo:0.0.1": todo
+#import "@preview/pavemat:0.1.0":* // show matrix beautifully
 #let 行间距转换(正文字体,行间距) = ((行间距)/(正文字体)-0.75)*1em
 #set par(leading: 行间距转换(12,20),justify: true,first-line-indent: 2em)
 #import "@preview/indenta:0.0.3": fix-indent
@@ -33,9 +34,11 @@
 // 默认可间断了，可调
 #import "@preview/ctheorems:1.1.3": *
 #show: thmrules
-#let theorem = thmbox("theorem", "Theorem", stroke: rgb("#ada693a1") + 1pt,breakable: true) //定理环境
-#let definition = thmbox("definition", "Definition", inset: (x: 0.5em, top: -0.25em,bottom:-0.25em),stroke: rgb("#ada693a1") + 0pt,breakable: false) // 定义环境
-#let proof = thmproof("proof", "Proof",breakable: true) //证明环境
+#let theorem = thmbox("定理", "定理", stroke: rgb("#ada693a1") + 1pt,breakable: true) //定理环境
+#let example = thmbox("例", "例", stroke:(paint: blue, thickness: 0.5pt, dash: "dashed") ,breakable: true) //定理环境
+
+#let definition = thmbox("定理", "定理", inset: (x: 0.5em, top: -0.25em,bottom:-0.25em),stroke: rgb("#ada693a1") + 0pt,breakable: false) // 定义环境
+#let proof = thmproof("证", "证",breakable: true) //证明环境
 // ----------------------------
 
 // #import "@preview/grayness:0.2.0": * // 基本图片编辑功能
@@ -245,17 +248,84 @@ $ J = mat(J _(1 )\(lambda _(1 )\)zws ,zws ,zws ,zws ,zws ;zws ,J _(2 )\(lambda _
 ]
 #theorem([*秩-零化度定理*])[
   $rank A+ "nullity" A("A的特征值空间维度") =n $
-  #proof[
+ $ [A|E]^T=mat(1,2,3,1,0,0;1,1,1,0,1,0;0,1,1,0,0,1) $
+ #h(2em) 对其做行初等变换，将A的下几行消元成0，对应的右边行即为一个解。可以理解为其核空间每一个维度可以消解A空间一个冗余维度。
 
-  ]
 ]
-首先我们可以求解出其所有特征值及其代数重数。 $ display(abs(lambda I-A)=sum_(i=0)^k (lambda-lambda_i)^mark((a_i),tag:#<dscs>)#annot(<dscs>,pos:top)[代数重数$"gm"$]) $
+首先我们可以求解出其所有特征值。 $ display(abs(lambda I-A)=sum_(i=0)^k (lambda-lambda_i)^mark((a_i),tag:#<dscs>)#annot(<dscs>,pos:top)[代数重数$"gm"$]) $
 
-#h(2em) 然后对于每一个特征向量，求解$(lambda_i I-A)$的秩, 叫做其几何重数$"am"$, 它决定这个Jordan矩阵中有多少个Jordan块。
+#h(2em) 然后对于每一个特征值,$dim("Null"(lambda_i I-A))$是多少就有多少jordan块，同时我们也要求解出其核空间的向量,记作$x$,然后使用jordan链进行递归求解直到无解,求解每一个jordan块的大小。
+
+$ A mark(mat(p_1,p_2,p_3,p_4),tag:#<p>)=mat(p_1,p_2,p_3,p_4)mat(lambda,1,0,0;0,lambda,1,0;0,0,lambda,1;0,0,0,lambda) =mat(lambda p_1 , lambda p_2 +p_1,lambda p_3 +p_2,lambda p_4 +p_3)
+#annot(<p>)[$P$] $
+$
+  (A-lambda E)p_1 =& 0  quad (1)\
+  (A-lambda E)p_2 =&P_1  quad (2)\ 
+  ... &
+  \
+  (A-lambda E)p_n =&P_(n-1 ) quad (n)\ 
+$
+上式叫做jordan链，直到$(k+1)$无法解出。则这个特征向量对应的jordan块的大小确定。
+
+// #theorem()[
+//   如果$A="Diag"(B,C)$ 那么 $A$ 的代数重数和几何重数也是$B,C$的和。]
+#example()[求可逆矩阵P和jordan矩阵J使得$A=P^(-1)J P$
+$ A=mat(-3,3,-2;-7,6,-3;1,-1,2) $
+#h(2em)$abs(lambda I-A)=0=>(lambda-1)(lambda-2)^2$,确定其有两个jordan矩阵$J_1,J_2$组成，对于$J_1$,向量$alpha_1=mat(1,2,1)^T$。
+
+求解$(2I-A)x=0$,只有一个特征向量$alpha_2=mat(-1,-1,1)^T$，所以$J_2$只由一个jordan块构成。根据jordan链求出$beta_1=(-1,-2,0)^T$。所以得
+$ P=mat(alpha_1,alpha_2,beta_1) $
+]
+=== 最小多项式
+#definition([*矩阵多项式*])[
+首先定义$g(lambda)=sum_(i=0)^m a_i lambda^i$,那么就可以定义矩阵 $g(A)=sum_(i=0)^m a_i A^i$ 为A的矩阵多项式。给出如下性质
+
+1. $A x=lambda x=> g(A) x=g(lambda) x$
+2. $P^(-1)A P=B=>P^(-1) g(A) P=g(B) $
+3. $A=diag(A_1,A_2,...,A_n)=>g(A)=diag(g(A_1),g(A_2),...,g(A_n))$
+4. $A$的特征多项式($f(lambda)=|lambda I-A|=sum_(i=0)^m a_i lambda^i$)就是$A$的化零多项式($g(A)=0$)。
+
+#proof([of 4])[
+  左式$lambda$换$A$。
+]
+]
+#example([求$A^m$])[
+假设$g(A)=A^m=>g(lambda)=lambda^m="Hl"(lambda)+ sum b_i lambda_i => g(A)=sum b_i A_i$
+]
+#definition([*最小多项式*])[
+  $A$的所有化零多项式中次数最低,$a_0=0$（首项系数为零）的最小多项式，记作$m_r (lambda)$。和特征多项式有相同的根，重数可以不同。
+]
+
 #theorem()[
-  如果$A="Diag"(B,C)$ 那么 $A$ 的代数重数和几何重数也是$B,C$的和。]
+  一个矩阵可以对角化的充分必要条件是$m_r (lambda)$的所有重数为1. $ m_r(lambda)=Pi(lambda-a_i) #h(0.5em)&#h(0.5em) a_i"互不相等" $
+]
 
+== 矩阵分解
+=== 矩阵的三角分解
+设$A in F_{n,n}$
+1. $L,U in F_{n,n}$分别为下三角和上三角矩阵，$A=L U$称作$L U$分解
+2. $L,V in F_{n,n}$分别为对角元素为1的下三角和上三角矩阵，$D$是对角矩阵，称作$L D V$分解
 
+#example([求解$display(P=mat(2,2,3;4,7,7;-2,4,5))$的LU和PDV分解])[
+这里简单给出一个定理，
+$ mark(H,tag:#<hang>)[P|E]=[H P|P] quad mat(P;"--";E)L=mat(P L;"--";mark(L,tag:#<l>,))  #annot(<hang>,yshift: 1em)[行初等变换]#annot(<l>,pos:bottom,yshift: 0.5em)[列初等变换] $  
+将其写成增广矩阵$display(mat(P,"|",E)=>mat(U,"|",L'))$,做行初等变换将P消成上三角矩阵。$L'A=U=>A=(L')^(-1)U=L U$
+
+对$U$建立$display(mat(P;"--";E))$，做列初等变换，$display(mat(P;"--";E))=>display(mat(D;"--";V'))$,有$U V'=D=>U=D (V')^-1=D V$
+]
+#h(2em)
+接下来我们将分析一个矩阵有LU,LDV分解的条件，并且注意，矩阵的$"LDV"$分解并不唯一。
+
+对于$A$,设k阶顺序余子式$display(Delta_i=abs(A_[0:i;0:i]))$，如果$"Rank"(A)=k$,其$1-k$阶顺序余子式不为0，则可LU分解，$1"到"(n-1)$阶顺序余子式不为0，则可LDV分解。
+==== 满秩分解
+#theorem([$R_"行" (A)=R_"列" (A)=R(A)$])[
+  行的秩表示为行向量张成向量空间的维度，列的秩表示为行向量张成向量空间的维度。
+  #proof()[根据高斯变换，得到行的秩等于主元个数等于列空间维度。]
+]
+任意不为零的矩阵$A_{m,n}$都有满秩分解
+
+== 矩阵的广义逆
+== 矩阵分析
 == 计算机视觉中的应用
 我们会用到的向量$in RR^2 RR^3  #h(0.2em)#footnote[$RR^n$表示n维向量空间]$。
 === $RR^3$中的变换（相机相关）

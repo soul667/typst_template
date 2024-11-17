@@ -30,6 +30,7 @@
 #show figure.where(kind:"tablex"): set figure(supplement: [表]) // 设置表
 #import "@preview/mannot:0.1.0": * // 公式突出
 // #import "@preview/oasis-align:0.1.0" // 自动布局
+#import "@preview/tablex:0.0.9": * // 表格
 // ------------定理 证明----------------
 // 默认可间断了，可调
 #import "@preview/ctheorems:1.1.3": *
@@ -173,7 +174,7 @@ $P_n (x)={sum_(i=0)^(n-1)a_i x_i|a_i in R}$称为多项式空间$P_n[x]$
 3. $[P _(n )lr(\[ x \] )\;lr(\( f lr(\( x \) )\,g lr(\( x \) )\) )= integral _(0 )^(1 )f lr(\( x \) )dot  g lr(\( x \) )upright(d )x ).] $
 
 #definition($norm(alpha)$)[
-  在内积空间，称$ norm(alpha)=sqrt((alpha,alpha)) $ 为向量$alpha$的长度。在欧式空间中，也称作*欧几里得范数*。下面给出几条它的性质
+  在内积空间，称$ norm(alpha)=sqrt((alpha,alpha))=alpha^T alpha $ 为向量$alpha$的长度。在欧式空间中，也称作*欧几里得范数*,常表示为$norm(alpha)_2$(*注意下标*)。下面给出几条它的性质
 1. (*Cauchy 不等式*) $abs((alpha,beta))^2<=norm(alpha)norm(beta)$
 2. $norm(alpha+beta)<=norm(alpha)+norm(beta)$
 3. 定义$alpha,beta$夹角$display(theta=arccos ((alpha,beta))/(norm(alpha)norm(beta)))$
@@ -192,13 +193,13 @@ $P_n (x)={sum_(i=0)^(n-1)a_i x_i|a_i in R}$称为多项式空间$P_n[x]$
   return $#use1 _1 #use2 _1 + #use1 _2 #use2 _2 + ... + #use1 _n #use2 _n$
   } 
 #definition[
-  在$V_n$中一组基${epsilon_1,epsilon_2,...,epsilon_n}$满足$ (epsilon_i,epsilon_i)=0,(epsilon_i,epsilon_j)!=0 & quad 0<=i,j<=n,i!=j $
+  在$V_n$中一组基${epsilon_1,epsilon_2,...,epsilon_n}$满足$ (epsilon_i,epsilon_i)=0#h(0.5em) \& #h(0.5em) norm(epsilon_i)=1 #h(0.5em) \& #h(0.5em) (epsilon_i,epsilon_j)!=0 & quad 0<=i,j<=n,i!=j $
   就称作其为标准正交基。
 ]
 从一组基${alpha_1,alpha_2,...,alpha_n}$转换到标准正交基#ji_($beta$)有
 $ beta_i= alpha_i-sum_(i=1)^(k-1)((a_k,beta_i))/((beta_i.beta_i))beta_i  $
 
-证明方法参考@杨明2003矩阵论 [p.~18],这里略去。用矩阵的方式表示为$ (alpha_1,alpha_2,...,alpha_n)=(beta_1,beta_2,...,beta_n)mat((beta_1,beta_1),(alpha_2,beta_1),...,(alpha_n,beta_1);,(beta_2,beta_2),...,(alpha_n,beta_2);,,...,...;,,,(beta_n,beta_n) ) $ 
+证明方法参考@杨明2003矩阵论 [p.~18],这里略去。用矩阵的方式表示为$ (alpha_1,alpha_2,...,alpha_n)=(beta_1,beta_2,...,beta_n)mat((beta_1,beta_1),(alpha_2,beta_1),...,(alpha_n,beta_1);,(beta_2,beta_2),...,(alpha_n,beta_2);,,...,...;,,,(beta_n,beta_n) ) $ <标准正交基> 
 ==== 线性变换 
 #definition([*线性变换*])[
   如果存在一个单射$T:V_n (F)->V_n (F)$,满足
@@ -322,7 +323,7 @@ $ mark(H,tag:#<hang>)[P|E]=[H P|P] quad mat(P;"--";E)L=mat(P L;"--";mark(L,tag:#
 #theorem([$R_"行" (A)=R_"列" (A)=R(A)$])[
   行的秩表示为行向量张成向量空间的维度，列的秩表示为行向量张成向量空间的维度。
   #proof()[根据高斯变换，得到行的秩等于主元个数等于列空间维度。]
-]
+]<行列秩相等>
 #theorem[
 任意不为零的矩阵$A_{m,n}$都有满秩分解 $ A_{m,n}=B_{m,r}C_{r,n} $
 求解方法①$  B'mat(A,"|",E)=>mat(mark(C',tag:#<hjt>),"|",B')=> A= mat(B_{m,r},0_{m,n-r}) mat(C_{r,n};0_{n-r,n}) =B_{m,r}C_{r,n} #annot(<hjt>)[行阶梯型]$
@@ -330,26 +331,185 @@ $ mark(H,tag:#<hang>)[P|E]=[H P|P] quad mat(P;"--";E)L=mat(P L;"--";mark(L,tag:#
 ② 先化为Hermite 标准形$H$(带主元行阶梯型),找到A中主元列取出构成$B=(alpha_1,alpha_2,...,alpha_n)$,$H$中非零行构成$C$
 ]
 ==== 可对角化矩阵的谱分解
-$ A=P^(-1)diag(mark(lambda_1" ,..., "lambda_1,tag:#<lam1>),lambda_2,...,mark(lambda_n,tag:#<lam2>)) P #annot(<lam1>)[$r_1$个]  #annot(<lam2>)[$r_n$个] $
-其中$lambda_i$表述矩阵的特征值，$r_i$表示特征值的重数。
+$ A=P^(-1)diag(mark(lambda_1" ,..., "lambda_1,tag:#<lam1>),lambda_2,...,mark(lambda_n,tag:#<lam2>)) P= mark(P^(-1)sum(lambda_i I_(r_i)) P,tag:#<pufenjie>,color: #blue) #annot(<lam1>)[$r_1$个]  #annot(<lam2>)[$r_n$个]  #annot(<pufenjie>)[谱分解] $
+其中$lambda_i$表述矩阵的特征值，$r_i$表示特征值的重数。并且我们有
+ $ sum I_(r_i)=E #h(0.5em) \&  #h(0.5em)I_(r_i)I_(r_j)=0(i!=j) #h(0.5em) \& #h(0.5em) I_(r_i)^2=I_(r_i)^2 #h(0.5em) \& #h(0.5em)  I_(r_i)^T=I_(r_i ) $
 === Schur分解与正规矩阵
-#definition([*实对称矩阵和Hermit矩阵*])[
-  $ "（实对称阵）" A^T=A $
-  $ "（Hermit矩阵）" A^H=mark((macron(A))^T,tag:#<macrom>)=A  #annot(<macrom>)[复共轭转置] $
+// #definition([*实对称矩阵和Hermit矩阵*])[
+//   $ "（实对称阵）" A^T=A $
+//   $ "（Hermit矩阵）" A^H=mark((macron(A))^T,tag:#<macrom>)=A  #annot(<macrom>)[复共轭转置] $
 
+// ]
+// 在欧式空间中，一个实对称矩阵$A$一定正交相似于一个对角阵。
+// $ A=C^T diag(lambda_1,...,lambda_n) C=C^(-1) diag(lambda_1,...,lambda_n) C $
+// 在酉空间,一个 Herm ite 矩阵 A (A H =A )一定可酉相似于对角形:即存在酉矩阵 U 。
+// $ A=U^H diag(lambda_1,...,lambda_n) U $
+#theorem([*UR分解*])[
+  对于一个可逆矩阵$A$,存在$ A=U"( 可逆矩阵)" R "(上三角矩阵)" $
+  #proof()[根据 @eqt:标准正交基,可知]
 ]
-在欧式空间中，一个实对称矩阵$A$一定正交相似于一个对角阵。
-$ A=C^T diag(lambda_1,...,lambda_n) C=C^(-1) diag(lambda_1,...,lambda_n) C $
-在酉空间,一个 Herm ite 矩阵 A (A H =A )一定可酉相似于对角形:即存在酉矩阵 U 。
-$ A=U^H diag(lambda_1,...,lambda_n) U $
-#definition([*UR分解*])[
-  对于一个可逆矩阵$C$,存在
+#theorem[
+如果$A$ 列满秩，则$ A_{m,k}=Q_{m,k}R_{k,k}  #h(0.55em)  & #h(0.55em)  "Q的列向量是A列空间的标准正交基" $
+]
+
+#definition([*正规矩阵*])[
+  对于矩阵$A_{m,n}$,如果$A^H A=A A^H$ 就称$A$是正规矩阵。
+]
+#h(2em) 常见的对角矩阵，对称反对称$(A^T=plus.minus A)$,Hermite矩阵与反Hermite矩阵$(A^H=plus.minus A)$,正交矩阵与酉矩阵$(A A ^T=A^T A=I,A A ^H=A^H A=I)$都是正规矩阵。
+#theorem[
+  对于矩阵$A_{n,n}$,其是正规矩阵的充要条件是$A$相似于对角矩阵，即$ exists U_{n,n} #h(1em) U^H A U=diag(lambda_1,lambda_2,...,lambda_n) $
+  #h(0em)推论充分必要条件
+  
+  ①A的特征向量是空间的标准正交基。
+
+  ②有*谱分解*$A=sum_(i=1)^s lambda_i I_i$,
 ]
 === 矩阵的奇异值分解
 矩阵的奇异值分解是在线性动态系统的辨识,最佳逼近问题,实验数据处理,数字 图像存储中应用广泛的一种分解。
+#theorem[
+  对于$A A^H in C_{m,n} #h(0.5em) A^H A in C_{m,n} $, 有如下性质
+  1. $"Rank"(A A^H)="Rank"(A^H A)="Rank"(A)$ （Use @行列秩相等）
+  2. $lambda_i!=0 #h(0.5em)$,$#h(0.5em) A A^H x=lambda_i x => A^H A x=lambda_i x$
+  3. 均为半正定矩阵，行满秩$(A A^H)_{m,m}$ 正定，列满秩$(A^H A)_{n,n}$ 正定。
+
+  #proof([of 2])[
+    $display( abs(A A^H -lambda_i E)=0=abs((A A^H -lambda_i E)^T)=abs(A^H A-lambda_i E) )$
+  ]
+]
+
+// #theorem([*矩阵秩和特征值关系*])[
+// $"Rank"(A_{m,n})=r,"特征值的个数"<=r $
+// ]
+#definition([*奇异值*])[
+  对于矩阵$A_{m,n}$,其奇异值是$A A^H$的特征值的平方根$ sigma_i=sqrt(lambda_i) #h(0.5em) \& #h(0.5em) (A A^H)x=lambda_i x $
+  其奇异值个数等于矩阵的秩。
+]
+
+#theorem[
+  For $A_{m,n}$,其奇异值可分解为$ A=U_{m,m} Sigma_{m,n} V^H_{n,n} $其中$U,V$是酉矩阵，$ Sigma=diag(sigma_1,sigma_2,...,sigma_w) plus.circle 0_{m-w,n-w} #h(0.5em) \& #h(0.5em) w=rank(A^H A)  #h(0.5em) \& #h(0.5em) sigma_i !=0 $
+
+  #proof()[对于$A^H A$ 因为其是半正定矩阵，所以有$ V^H A^H A V=diag(lambda_1,lambda_2,...,lambda_k) plus.circle 0  $
+  其中$display(V=mat(v_1,v_2,...,v_n))$ 是$A^H A$标准正交的特征向量
+  $ (A v_i,A v_j)&=(A v_j)^H A v_i=v_j^H (A^H A v_i)=v_j^H (lambda_i v_i)=lambda_i (mark(v_j^H v_i,tag:#<vjvi>,color:#black))\  &= 0  #h(0.5em) \& #h(0.5em) (i!=j) \ &=lambda_i=sigma_i^2 #h(0.5em) \& #h(0.5em) (i=j,lambda_i!=0)  #annot(<vjvi>,pos:top)[$ 0 & #h(0.5em) \& #h(0.5em) i!=j \ 1& #h(0.5em) \& #h(0.5em) i=j $] $
+  设$display(u_i=1/sigma_i A v_i)=>A v_i=sigma_i u #h(0.5em) \& #h(0.5em) i=1,2,...,rank(A).$ 所以
+  $ A V=A mat(v_1,v_2,...,v_n)&=mat(sigma_1 u_1,sigma_2 u_2,...,sigma_r u_r,0,...,0 ) \ &= mat(u_1,u_2,...,u_r,0_{1,n-r})diag(sigma_1,sigma_2,...,sigma_r,0,...,0) $
+  $ A=U mat(Delta,;,0) V^(-1) =U Sigma V^H =sum_(i=1)^r (u_i sigma_i v_i^H) $
+  后面这一项可以取$k<r$,做近似压缩。
+  ]
+
+]
+#theorem([*极分解*])[
+  对于$A_{n,n}$,有$A=P_{n,n}"(半正定)" Q_{n,n}"(酉矩阵)"$
+  #proof()[
+    $display(A=U Sigma V^H=U Sigma(E) V^H =U Sigma(U^H U) V^H=(U Sigma U^H) (U V^H)=P Q)$
+  ]
+  P是缩放，Q是旋转。所以得名极分解。
+]
+
+#definition([*对称、实对称、正定、半正定、海森矩阵*])[
+#align(center,[
+  #tablex(
+  columns: 3,
+  align: center + horizon,
+  auto-vlines: false,
+  repeat-header: true,
+
+  /* --- header --- */
+  [*名称*],
+  [*定义*],[注释],
+  [实对称矩阵],[$display(A in RR^(n,n) #h(0.5em) A=A^T)$ ],[反对称$A=-A^T$],
+  [Hermite(厄米特)矩阵],[$display(A in CC^(n,n) #h(0.5em) A=A^H)$],[反Hermite$A=-A^H$],
+  // [实对称矩阵],[$forall x,y in RR^n,(A x,y )=(x,A y )$],[元素是*实数*的对称阵],
+  [正交矩阵],[$T in RR #h(0.5em) (alpha,beta)=(T(alpha),T(beta)) $],[ $A A^T =E,A^(-1)=A^T$],
+  [酉矩阵], [$T in CC #h(0.5em) (alpha,beta)=(T(alpha),T(beta)) $],[$A^H A=A A^H=E$],
+  [正规矩阵], [$A A^H=A^H A$],[与正交矩阵相似的矩阵],
+  [正定矩阵],[$forall x in RR^n,x^T A x>0$],[正定矩阵的特征值都是正的],
+  [半正定矩阵],[$forall x in RR^n,x^T A x>=0$],[特征值都是非负的],
+  [#v(0.7em)海森矩阵#v(0.7em)],[$display(H_{i,j}=(partial^2 f)/(partial x_i partial x_j))$],[二阶偏导数矩阵]
+  /* -------------- */
+
+
+)
+])
+]
+==== 最小二乘应用
+
+参考 @akritasApplicationsSingularvalueDecomposition2004,我们简述其在最小二乘问题上的应用。考虑$ min norm(A c -y)_2 #h(0.5em) \& #h(0.5em) (A "为数据矩阵" c "为参数矩阵") $
+比如对于 $f(x)=c_1x+c_2x^2+c_3x^3$ $ A=mat(x_1,x_1^2,...,x_1^3;x_2,x_2^2,...,x_2^3;,...,...,;x_n,x_n^2,...,x_n^3)  #h(0.5em) \& #h(0.5em)  c=mat(c_1;c_2;...;c_n) & y=mat(y_1;y_2;...;y_n) $
+
+首先我们知道$ A=U sum V^H  #h(0.5em) \& #h(0.5em)  U"是酉矩阵",norm(U)=1$,所以
+$ norm(y-A c)^2 _mark(2,tag:#<l2fs>)&=norm(U^H (y- A c))^2_2=norm(U^H (y-  U sum V^H c))^2_2 \ &=norm(U^H y -sum V^H c )_2^2=norm(D-sum Z )_2^2 \ &= norm(mat(delim:"(",d_1,d_2,...,d_n)^T -mat(delim:"(",sigma_1 z_1 , ..., sigma z_r,0_{1,n-r};)^T)^2_2 \ &= norm(mat(delim:"(",d_1-sigma_1 z_1,d_2-sigma_2 z_2,...,d_r-sigma_r z_r,d_(r+1),...,d_n )^T  )^2_2 \ &= sum_(i=1)^r (d_i-sigma_i z_i)^2+ sum_(i=r+1)^n d_i ^2  #annot(<l2fs>)[L2 范数 #footnote[L2范数表示欧几里得空间上符合直觉的向量长度$display(norm(x)_2)=sqrt(x^T x)=sqrt(x_1^2+x_2^2+...+x_n^2)$ ]] $
+
+因为$A=U sum V^H$ $A"为定值",U,sum,V_H$ 也为定值，所以$d$也为定值 
+
+$ min norm(y-A c)_2^2= min sum_(i=1)^r (d_i-sigma_i z_i)^2 => z_i= d_i / sigma_i #h(0.5em) \& #h(0.5em) (i=1,2,...,r) $
+$ V^H c_i=z_i -> c_i=V z_i  #h(0.5em) \& #h(0.5em) (i=1,2,...,r) $
+并且$[r_1,n]$ 的$c_i$ 不影响，可任取。
+#figure(
+  image("./img/4.png",width:50%),
+  caption: [
+    通过SVD求解线性最小二乘问题的例子并和梯度下降法比较
+  ]
+)
 
 == 矩阵的广义逆
+=== 减号广义逆
+#definition([*逆的推广*])[
+$"for" A_{m,n}$
+$ A^(-1)_{m,m}A_{m,n} quad "(左逆)" #h(1.5em)  #h(1.5em)  A_{m,n}A^(-1)_{n,n} quad "(右逆)" $
+左逆列满秩$(m>=n)$，右逆行满秩$(m<=n)$。
+$ "（左逆求解）" P_{n,m} mat(A_{m,n},E_{m,m})= mat(E_{m,m},...,P_{m,m})=mat(E_{m,m},...,P_{n,m};,,...) $
+$ "（右逆求解）" mat(A_{m,n};E_{n,n})P_{n,m}= mat(E_{m,m};...;P_{n,n})=mat(E_{m,m};...;P_{n,m} #h(0.5em) ... ) $
+
+// #align(center,[
+//   #tablex(
+//   columns: 3,
+//   align: center + horizon,
+//   auto-vlines: false,
+//   repeat-header: true,
+
+//   /* --- header --- */
+//   [*名称*],
+//   [*定义*],[注释],[减号广义逆],[]
+//   )
+// ])
+]
+
+#definition([*减号广义逆*])[
+  对于$A_{m,n} in CC^(n,n)$ 存在$G_{n,m} in CC^(n,n)$
+ 使得 $A G A=A$,就称$G$是$A$的减号广义逆。
+ $G in A{1} #h(0.5em) \& #h(0.5em) A{1}={A_1^-,A_2^-,...,A_n^-}$
+]
+$G in A{1}$*的充分必要条件* 
+$ "PAQ"=diag(I_r,0) #h(0.5em) \& #h(0.5em)  G=Q mat(I_r,U;V,W) P #h(0.5em) \& #h(0.5em) U V W"大小合适，任意矩阵" $
+#proof()[
+  ①必要性，$P(A G A)Q=diag(I_r,0)mat(I_r,U;V,W)diag(I_r,0)=diag(I_r,0)=P A Q$
+
+  ②充分性 $P A Q=P(A G A)Q=diag(I_r,0)Q^(-1) G P^(-1) diag(I_r,0)=diag(I_r,0)$
+$ mat(I_r,;,0) Q^(-1) G P^(-1)mat(I_r,;,0)=mat(I_r,;,0)=> Q^(-1) G P^(-1)=mat(E_{r,r},U;V,W) $ 
+所以$display(G=Q mat(E_{r,r},U;V,W) P)$
+]
+至于求解过程就是$  mat(A_{m,n},E_{m,m};E_{n,n},0) =>("做行列初等变换")=>mat(diag(E_r,0),P_{m,m};Q_{n,n},0) $
+
+=== M-P逆
+#definition([*M-P逆*])[
+  对于$A_{m,n}$,其M-P逆$A^(+)=G$, 有(任意矩阵都存在，并且唯一)
+  $ A G A= A #h(0.5em) \& #h(0.5em)  G A G = G  #h(0.5em) \& #h(0.5em)  (A G)^H=A G #h(0.5em) \& #h(0.5em)  (G A)^H= G A $
+]
+不做具体赘述了，记住在python中可以使用`np.linalg.pinv`求解就足够了。
+// === 投影变换
+// #definition([*投影变换*])[
+//   对于$CC^n=L plus.circle M , x=y+z #h(0.5em) \& #h(0.5em) x in L ,y in M  $,线性变化$sigma$满足$sigma(x)=y$,就称其为$CC^n$沿着自空间M到L的投影变换。并且有充分必要条件
+//   $ sigma=sigma^2 $
+// ]
+// #example([$display(L="span" mat(1,0)^T #h(0.5em) \& #h(0.5em) M="spam" mat(1,-1)^T),"求"RR^2 "沿M到L的投影矩阵" $])[]
+
+#theorem([*最佳的最小二乘解*])[
+  $ min norm(A x -b)_2^2 = (x=A^+b) $
+]
 == 矩阵分析
+=== 矩阵函数及其应用
+
 == 计算机视觉中的应用
 我们会用到的向量$in RR^2 RR^3  #h(0.2em)#footnote[$RR^n$表示n维向量空间]$。
 === $RR^3$中的变换（相机相关）
@@ -747,7 +907,7 @@ $ d M(Delta X)= 1/2 d Tr []  $
 #outline(title: "TODOs", target: figure.where(kind: "todo"))
 = 一些其他概率论知识
 #set page(columns: 1)
-#bibliography("use.bib", title: [
+#bibliography(("use.bib","mylib.bib"), title: [
 参考文献#v(1em)
 ],style: "nature")
  

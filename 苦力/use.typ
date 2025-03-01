@@ -508,6 +508,8 @@ $ mat(I_r,;,0) Q^(-1) G P^(-1)mat(I_r,;,0)=mat(I_r,;,0)=> Q^(-1) G P^(-1)=mat(E_
   $ min norm(A x -b)_2^2 = (x=A^+b) $
 ]
 == 矩阵分析
+// === 向量范数
+
 === 矩阵函数及其应用
 
 == 计算机视觉中的应用
@@ -781,7 +783,7 @@ $
   $ d(I)=0=d(X X^(-1))&=d(X) X^(-1) +X d(X^(-1)) \ 
   d(X^(-1))&=-X^(-1)d(X)X^(-1) $
 ]
-]
+]<the2213>
 === 标量对矩阵求导的求解过程
 从上面的例子中，我们可以得到对于一个$f(x)$求解$display(pdv(f(x),x))$的固定步骤
 #pseudocode-list[
@@ -793,87 +795,60 @@ $
 
 // $ d f(x) =Tr[]$
 // 对于$display(d (X^T A X))$
-== 行列式
-#definition([行列式])[
-  我们把行列式定义为一个关于矩阵A的标量函数，记作$display(det(A))"或"|A|$
-]
 
-#definition([矩阵范数])[
-  我们把行列式定义为一个关于矩阵A的标量函数，记作$display(det(A))"或"|A|$
-]
-#align(center,[
-  = 矩阵求导和多元微分
-])
 // #gls("potato")是我们都喜欢吃的一种菜肴
-$
-mark(1, tag: #<num>) / mark(x + 1, tag: #<den>, color: #blue)
-+ mark(2, tag: #<quo>, color: #red)
-#annot(<num>, pos: top)[Numerator]
-#annot(<den>)[Denominator]
-#annot(<quo>, pos: right, yshift: 1em)[Quotient]
-$
-
-A todo on the left #todo[On the left].
-= 最小二乘的几种解法
+#align(center,[
+  = 最优化理论
+])
+所谓最优化问题，就是求解 $min f(x) #h(0.5em) \& #h(0.5em) x in K$
+== 最小二乘的几种解法
 $ "min"F(x)=||f(x)||_2^2=||b-A hat(x)|| $
 #v(1em)
-== 牛顿法
+=== 牛顿法
 $ f(x) &=f(x_0)(x-x_0)^0+f'(x_0)(x-x_0)+((f''(x_0))/2!)(x-x_0)^2+...\ 
        &approx f(x_0)(x-x_0)^0+f'(x_0)(x-x_0)+(f''(x_0)(x-x_0)^2)/2
  $<1>
 
-$ dv(,x)f(x)=f'(x_0)+f''(x_0)(x-x_0) =g(x) $
+$ g(x)=dv(,x)f(x)=f'(x_0)+f''(x_0)(x-x_0) =g(x) $
 
 $g(x)=0,x=x_1$的时候是极值，
 $ x_1-x_0=(f'(x))/(f''(x)) => x_1= x_0 -  (f'(x))/(f''(x)) $
 
-矩阵的梯度为一阶导的转置，函数的梯度为一阶导,雅可比矩阵$J$ 二阶导数矩阵$H$。
-$ Delta x =-J/H $<2>
-这便是我们熟知的牛顿法。
 
-== 梯度下降法
+=== 梯度下降法
+找到可微函数的局部最小值
 
-$ theta_(i+1)(j)=theta_i (j)-alpha pdv(,x_j)f(x) $ <梯度下降>
+#pseudocode-list[
+  + 给定*初始值* $x_0,k=0$
+  + *while* 
+    + 计算出$pdv(f,x),"cost"$
+    + $x=x-alpha(pdv(f,x))$
+    + *if* $"cost"<epsilon$ 
+       + *break*
+  + *end* 
 
-== 牛顿法
-高斯-牛顿法（Gauss-Newton method）是一种非线性最小二乘问题的优化方法，通常用于拟合非线性模型。它通过将非线性问题线性化来简化求解，常用于机器学习、计算机视觉等领域中的优化问题。
+]
+$ theta(j)'&=theta (j)-alpha pdv(,x_j)f(x) #h(0.5em) \& #h(0.5em) "每一个参数都更新完再下一步" \ 
+  theta(j)&=theta(j)'
+$ <梯度下降>
 
-下面是高斯-牛顿法的详细推导过程。
-
-// === 1. 问题定义
-
-假设我们有一个非线性最小二乘问题，其目标是找到 $x$ 使得以下目标函数$F(x)$ 最小化：
+*容易走出锯齿路线，从而增加迭代次数*。
+=== 高斯牛顿法
 
 #mitex("
-F(x) = \frac{1}{2} \| f(x) \|^2 = \frac{1}{2} \sum_{i=1}^m (f_i(x))^2
+f(x_k + \Delta x) \approx f(x_k) + J(x_k)^T \Delta x
 ")
 
-其中，#mitex("f(x) = [f_1(x), f_2(x), \dots, f_m(x)]^T") 是一个由 #mi("$m$") 个实值函数组成的向量函数，代表误差项或残差（residual），而 #mi("x") 是我们希望优化的 #mi("n") 维变量。
-
-目标是最小化 #mi("\| f(x) \|^2") 的平方和，找到一个 #mi("x") 使得 #mi("f(x) \approx 0")。
-
-// === 2. 泰勒展开线性化
-
-假设我们已经有一个当前解 #mi("x_k")，我们希望找到一个小的增量 #mi("\Delta x")，使得更新后的 #mi("x_{k+1} = x_k + \Delta x") 更接近最优解。
-
-在 #mi("x_k") 附近，我们对 #mi("f(x)") 进行一阶泰勒展开：
-
+我们的目标函数可以近似为：
 #mitex("
-f(x_k + \Delta x) \approx f(x_k) + J(x_k) \Delta x
-")
-
-其中 #mi("J(x_k)") 是 #mi("f(x)") 在 #mi("x_k") 处的雅可比矩阵，其第 #mi("i") 行、第 #mi("j") 列的元素为 #mitex("J_{ij} = \frac{\partial f_i}{\partial x_j}")
-因此，我们的目标函数可以近似为：
-#mitex("
-F(x_k + \Delta x) \approx \frac{1}{2} \| f(x_k) + J(x_k)^T \Delta x \|^2
+min \frac{1}{2} \| f(x_k) + J(x_k)^T \Delta x \|^2_2
 ")
 
 // === 3. 构造近似的二次目标函数
 
 现在，我们将近似的目标函数展开：
 
-// $  min 1/2||f(x+Delta x)||_2^2 $
-/init1
+
 $ M(Delta X)=1/2 f(x+Delta X)^2&=1/2 (f(x)+J^T Delta X)^T ( f(x)+J^T Delta X) \ 
 &= 1/2 [mark( f(x)^T+Delta X ^T J,tag: #<E>) ][mark(f(x)+J^T Delta X, tag: #<F>)] \
 &= 1/2 [ mark(||f(x)||^2, tag: #<A>)+mark(f(x)^T J^T Delta X, tag: #<B>) +mark(Delta X ^T J f(x), tag: #<C>)+mark(Delta X ^T J J^T Delta X, tag: #<D>) ] \
@@ -886,22 +861,154 @@ $ M(Delta X)=1/2 f(x+Delta X)^2&=1/2 (f(x)+J^T Delta X)^T ( f(x)+J^T Delta X) \
 #annot(<F>)[F]
 
 $<mdeltax>
- $ d C &= d Tr[F(X)^T J^T Delta X]=Tr[d(F(X)^T J^T Delta X)] \ 
- & = Tr[F(X)^T J^T d Delta X] => pdv(C,Delta X)=F(x)^T J^T
+ $ d C &= d Tr[f(x)^T J^T Delta X]=Tr[d(f(x)^T J^T Delta X)] \ 
+ & = Tr[f(x)^T J^T d Delta X] => pdv(C,Delta X)= J f(x)
  $
 
-$ pdv(M (Delta X),Delta X)& = 1/2(0+F(X)^T J^T+ F(X)^T J^T+ mark(2(J J^T Delta X ), color: #blue,tag:#<jjdeltax>)) \ & =F(X)^T J^T+J J^T Delta X
-#annot(<jjdeltax>, pos: top)[@the3(8)]
-
+$ pdv(M (Delta X),Delta X)& = 1/2(0+ J f(X)+ J f(x)+ mark(2(J J^T Delta X ), color: #blue,tag:#<jjdeltax>)) \ & =J f(x)+J J^T Delta X =0
+#annot(<jjdeltax>, pos: top)[@the2213(5)]
 $
+$ H Delta X=g  #h(0.5em) \& #h(0.5em)  H=J J^T #h(0.5em) \& #h(0.5em)  g=-J f(x) $
 
-但是 如果@eqt:mdeltax 中的第二步不做展开，我们直接求解也是可以的
-$ d M(Delta X)= 1/2 d Tr []  $
+所以高斯牛顿法的步骤是
+#pseudocode-list[
+  + 给定*初始值* $x_0,k=0$
+  + *while* 
+    + 计算出$J(x_k),f(x_k) #h(0.5em) \& #h(0.5em)  H=J J^T #h(0.5em) \& #h(0.5em)g=-J f(x) $
+    + 使用$H Delta X=g$求出$Delta x$
+    + *if* $Delta x<epsilon$ 
+       + *break*
+    + *else*
+      + $x_(k++)=x_k+Delta x$
 
-= 卡尔曼滤波
+  + *end*
+]
 
-// #gls("potato")是我们都喜欢吃的一种菜肴
-// Plural: #glspl("potato")
+它的缺点是要求$H$矩阵可逆，而且计算量大，有时候可能无解。并且$Delta x$过大会导致其局部近似不精确，严重的时候，可能无法保证迭代收敛。同时也会锯齿状增大迭代次数（和梯度下降一样）。
+==== 列文伯格-马夸特法(LM)
+为了避免其迭代次数过长的缺点，在高斯牛顿的基础上进行优化，提出一个信赖区域。
+$ rho=(f(x+Delta x)-f(x)) /(J^T Delta x)  $
+如果它接近一就不需要更改，如果过大就需要缩小步长，如果过小就需要增大步长，这样的话，就可以动态调整步长了。最优化问题变为
+$ min 1/2 norm(f(x)+J^T Delta x)_2^2 #h(0.5em) s.t #h(0.5em) norm( D Delta x )_2^2< mu $
+构建拉格朗日函数#footnote[目标函数为f在约束条件g下的极值与其拉格朗日函数的极值相同。λ被称为拉格朗日算子]$ L(Delta x,lambda)=1/2 norm(f(x)+J^T Delta x)+lambda(norm(D Delta x)_2^2-mu) $
+$  pdv(L(Delta x,lambda),Delta x)=J f(x)+J J^T Delta X+ lambda pdv((Delta x^T D^T D Delta x),Delta x)=J f(x)+J J^T Delta x+ lambda D^T D Delta x $
+之前的$H$变为$display(J J^T+lambda D^T D)$,求解步骤变为
+#pseudocode-list[
+  + 给定*初始值* $x_0,k=0$
+  + *while* 
+     + 计算出$J(x_k),f(x_k) #h(0.5em) \& #h(0.5em)  H=J J^T+lambda D^T D #h(0.5em) \& #h(0.5em)g=-J f(x) $
+     + 计算出$Delta x$
+    + 计算$rho_k=(f(x+Delta x)-f(x)) /(J^T Delta x)$
+    + *if* $rho_k <1/4$
+      + $#h(0.5em) Delta x_(k)=1/4 Delta x_k$
+    + *else*
+      + *if* $rho_k >3/4$
+        + $Delta x_(k)=min(2 Delta x_k,mu)$
+      + *else*
+        + $Delta x_(k)=Delta x_k$
+    + *if* $rho_k>xi$
+      + $x_(k+1)=x_k+Delta x$
+    + *else*
+      +  $x_(k+1)=x_k$
+    + k=k+1
+    + *if* $Delta x_k<epsilon$ 
+       + *break*
+
+  + *end*
+]
+==== 随机梯度下降法
+=== Example
+#align(center,[
+  = 概率论+随机过程
+])
+
+== 随机变量
+#definition()[
+  定义从n中取出r个元素的排列数为$display(C_n^r=n!/(n-r)!r!)$
+]
+#definition([*样本空间、随机事件、概率频率，常见公理*])[
+#align(center,[
+  #tablex(
+  columns: 3,
+  align: center + horizon,
+  auto-vlines: false,
+  repeat-header: true,
+
+  /* --- header --- */
+  [*名称*],
+  [*定义*],[注释],
+  [样本空间$Omega$],[全部事件的空间],[*所有可能的结果*],
+  [事件$A$],[样本空间的*子集*],[*可能发生的事件*],
+  // [频率$P_n$],[事件发生的频率],[*事件发生的频率*],
+  [概率$P$],[事件发生的可能性],[*事件发生的可能性*],
+  [事件独立],[$ P(Pi A_i)=Pi P(A_i )$],[],
+  [条件概率],[$P(A|B)=P(A B)"/"P(B)$]
+)
+])
+// 事件的严格定义需要引入$sigma"-代数"$,需要测度学。
+一些基本概率公理
+$ "(全概率公式)" & P(A)=sum_(i=1)^n P(A B_i) #h(0.5em) \& #h(0.5em) B_i "是样本空间的分割" \ 
+"(乘法公式)" & P(A B)=P(A|B)P(B) \
+"(贝叶斯公式)" & P(B_i|A)=P(A B_i)/P(A)=P(B_i|A)=P(A B_i)/(sum_(i=1)^n P(A B_i))=(P(A B_i))/(P(A|B_i)P(B_i)) $
+]
+
+常见的分布如下
+#align(center,[
+  = 最优化
+])
+
+== 拉格朗日乘数法
+一个函数的极值可以通过驻点来求解，驻点不一定是极值点，有可能是鞍点。
+
+// 这是一个无约束问题
+// $ "minize" fvec(x) $
+
+
+== PCA
+先推导二维的PCA
+
+计算一维数据的方差
+$ s^2(X)=1/(n-1) sum_(i=1)^n (x_i-macron(x))^2 $
+// \alpha
+$alpha beta sum  delta  Delta  pdv(f,x) plus.minus 11111 $
+对于二维数据有协方差 
+$  "cov" (X,Y)=1/(n-1) sum_(i=1)^n (x_i-macron(x))(y_i-macron(y)) $
+
+协方差矩阵C 其实是$(X_1=X-macron(X))$
+$ C=1/(n-1) X_1^T X_1 $
+
+
+定义一个投影方向$v=(x_0,y_0) #h(0.5em) "st" #h(0.5em) x_0^2+y_0^2=1 $  
+// #figure(
+//   image("img/5,png",width:50%),
+//   caption: [
+    
+//   ]
+// )
+// 
+#image1(image("img/5.png", height: 7.8cm),"示意图")
+
+
+$ S=arrow(v) arrow(x) =|arrow(x)| cos theta $
+在这个方向投影后的长度的方差其实可以表示为
+$ 1/(n-1) sum S^2 =1/(n-1)(arrow(v)X_1^ T)(arrow(v)X_1^ T)^T= arrow(v) (X_1^ T X_1 )/(n-1)  arrow(v)^T=arrow(v) C arrow(v)^T $
+
+最优化方差最小值
+
+$ J=arrow(v) C arrow(v)^T  #h(0.5em) "st" #h(0.5em) arrow(v) arrow(v)^T=1 $
+
+$ F(arrow(v))=arrow(v) C arrow(v)^T -lambda(1-arrow(v)arrow(v)^T) $// 
+
+$ pdv(,v)F(arrow(v))=0 => 2C v^T -2 lambda v^T=0   $
+$  (pdv(,v) f(x) v=f(x)^T ,pdv(,v) A^T v A=A v+A^T v),C=C^T $
+C是实对称矩阵并且使用矩阵求导@the2213
+
+$ C v^T = lambda v $
+
+对C做特征值分解，得到两个特征向量PC1,PC2
+
+
+#image1(image("img/6.png", height: 7cm),"PC1 PC2示意图")
 
 // #gls("海森矩阵", display: "whatever you want")
 #outline(title: "TODOs", target: figure.where(kind: "todo"))
